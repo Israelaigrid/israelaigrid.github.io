@@ -1,40 +1,806 @@
-<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8">
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Israel AI Grid — דרכון דיגיטלי</title>
+<title>Israel AI Grid — לוח קומפקטי (רשומה אמיתית)</title>
+<!--
+  ============================================================================
+  ISRAEL AI GRID — "דרכון דיגיטלי לעסק" — COMPACT ONE-SCREEN DASHBOARD
+  REAL-DATA INSTANCE: entity://M/beer-sheva/israel-ai-grid — Company Zero.
+  ============================================================================
+  Identical render engine to compact.html (same CSS, same window.IAIGCompact.
+  render(businessData) function — copy-paste, not forked). ONLY the
+  businessData JSON at the bottom differs. meta.demo = false — no ribbon.
+
+  businessData below is copied VERBATIM from docs/passport-template/
+  israel-ai-grid.html's own businessData (built from entities +
+  external_identifier + trust_score + field_provenance + booking_slots +
+  salon_services in PostgreSQL `iaig`, cross-checked with direct SELECTs on
+  2026-07-08). Nothing here is guessed or re-derived except:
+    identity.tags — additive optional field (see compact.html's header
+    comment). Here it is a straight re-split of the ALREADY-APPROVED
+    identity.categoryTag string ("M · שירותים מקצועיים (טכנולוגיה) · באר שבע")
+    into chip form — no new fact, same source string.
+  identity.shortId is intentionally OMITTED (unlike the pizza demo's
+  "IL-REST-000452") because no such government-issued short code exists for
+  this entity in the DB — inventing one would violate the project's
+  no-invented-data rule. The render engine falls back to showing the real
+  entity://... id instead (see compact.html renderHeader: `id.shortId ||
+  id.entityId`).
+
+  Fields that could NOT be verified from the DB (same list as
+  israel-ai-grid.html): a distinct verification_record timestamp (falls back
+  to entities.created_at), a friendly owner name (only owner_entity=
+  user://972509000226 exists), any uploaded logo/cover asset, Google review
+  data, 2FA status (st:"unknown", excluded from both the gaps and
+  opportunities buckets by design — "unknown" is never presented as a
+  negative). See the SCORE FORMULA comment at the bottom for how ai/
+  automation/marketing (56/55/15) were derived; digital=71 is verbatim from
+  scripts/generate_passport.compute_digital_score().
+  ============================================================================
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=Rubik:wght@500;600;700;800&display=swap" rel="stylesheet">
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: { sans: ['Heebo','Rubik','Segoe UI','Arial','sans-serif'] }
+      }
+    }
+  };
+</script>
 <style>
- body{font-family:"Segoe UI","Noto Sans Hebrew",Arial,sans-serif;background:#0A1220;color:#E9EFF8;
-      max-width:720px;margin:0 auto;padding:32px 18px;line-height:1.55}
- .card{background:linear-gradient(160deg,#111C30,#0E1A2E);border:1px solid #2C3F5E;border-radius:14px;padding:26px}
- h1{margin:0;font-size:1.5rem} .sub{color:#8CA0BC;font-size:.9rem;margin-top:2px}
- .score{font-size:2.6rem;font-weight:800;color:#4CC3E8} .score small{font-size:1rem;color:#8CA0BC}
- .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin:18px 0}
- .f{background:#16243C;border:1px solid #23334E;border-radius:9px;padding:9px 12px}
- .f .k{font-size:.72rem;color:#5E7189} .f .v{font-weight:650;font-size:.92rem;margin-top:2px}
- .ch{display:flex;gap:10px;align-items:baseline;padding:7px 4px;border-bottom:1px solid #23334E;font-size:.9rem}
- .ch .k{flex:0 0 110px;color:#8CA0BC} .ch .v{flex:1;word-break:break-all}
- .ok{color:#46D68C;font-size:.78rem;font-weight:700} .un{color:#8CA0BC;font-size:.78rem}
- .foot{color:#5E7189;font-size:.75rem;margin-top:16px}
-</style></head><body><div class="card">
-<h1>Israel AI Grid</h1>
-<div class="sub">דרכון דיגיטלי · entity://M/beer-sheva/israel-ai-grid</div>
-<div class="grid">
- <div class="f"><div class="k">Digital Score</div><div class="score">71<small>/100</small></div></div>
- <div class="f"><div class="k">סטטוס אימות</div><div class="v">מאומת בעלים (L1)</div></div>
- <div class="f"><div class="k">בעלות</div><div class="v">claimed</div></div>
- <div class="f"><div class="k">עיר</div><div class="v">beer-sheva</div></div>
-</div>
-<h2 style="font-size:1rem">ערוצים</h2>
-<div class="ch"><span class="k">ביט (תשלום)</span><span class="v">+972509000226</span><span class="ok">מאומת</span></div>
-<div class="ch"><span class="k">אתר</span><span class="v"><a href="https://israelaigrid.github.io" style="color:#4CC3E8">israelaigrid.github.io</a></span><span class="ok">מאומת</span></div>
-<div class="ch"><span class="k">אימייל</span><span class="v"><a href="mailto:leviitzhak41@gmail.com" style="color:#4CC3E8">leviitzhak41@gmail.com</a></span><span class="un">לא מאומת</span></div>
-<div class="ch"><span class="k">פייסבוק</span><span class="v"><a href="https://www.facebook.com/profile.php?id=1173051522561873" style="color:#4CC3E8">https://www.facebook.com/profile.php?id=1173051522561873</a></span><span class="un">לא מאומת</span></div>
-<div class="ch"><span class="k">גיטהאב</span><span class="v"><a href="https://github.com/Israelaigrid" style="color:#4CC3E8">https://github.com/Israelaigrid</a></span><span class="ok">מאומת</span></div>
-<div class="ch"><span class="k">אינסטגרם</span><span class="v">itzhakaigrid</span><span class="un">לא מאומת</span></div>
-<div class="ch"><span class="k">פייבוקס (תשלום)</span><span class="v"><a href="https://links.payboxapp.com/1nyvGm1TB4b" style="color:#4CC3E8">https://links.payboxapp.com/1nyvGm1TB4b</a></span><span class="ok">מאומת</span></div>
-<div class="ch"><span class="k">טלפון</span><span class="v"><a href="https://wa.me/972509000226" style="color:#4CC3E8">+972509000226</a></span><span class="ok">מאומת</span></div>
-<div class="ch"><span class="k">טלגרם</span><span class="v"><a href="https://t.me/Protocol26bot" style="color:#4CC3E8">Protocol26bot</a></span><span class="ok">מאומת</span></div>
-<div class="ch"><span class="k">ערוץ וואטסאפ</span><span class="v"><a href="https://whatsapp.com/channel/0029VbDXxzoDDmFVCkhXcq3P" style="color:#4CC3E8">https://whatsapp.com/channel/0029VbDXxzoDDmFVCkhXcq3P</a></span><span class="un">לא מאומת</span></div>
-<div class="foot">הופק מהרשומה המאומתת בלבד · 2026-07-08T16:05:41+00:00 ·
-ראיות: 0 רשומות אימות ·
-מקורות: operator/company-zero-2026-07-08</div>
-</div></body></html>
+  /* ==========================================================================
+     Only what Tailwind's utility classes cannot express.
+     ========================================================================== */
+  html,body{ margin:0; padding:0; background:#0d1527; }
+  body{ font-family:"Heebo","Rubik","Segoe UI",Arial,sans-serif; }
+  .ltr-inline{ unicode-bidi:isolate; direction:ltr; display:inline-block; }
+
+  /* thin, subtle scrollbar (used only in the <1280px fallback / any overflow) */
+  ::-webkit-scrollbar{ width:8px; height:8px; }
+  ::-webkit-scrollbar-track{ background:transparent; }
+  ::-webkit-scrollbar-thumb{ background:#334155; border-radius:8px; }
+  *{ scrollbar-width:thin; scrollbar-color:#334155 transparent; }
+
+  /* ---- ONE-VIEWPORT contract ------------------------------------------- */
+  /* Desktop (>=1280px): the whole app is exactly one viewport tall, no page
+     scroll. Below that we fall back to a normal scrolling page. */
+  @media (min-width:1280px){
+    html,body{ height:100%; overflow:hidden; }
+    .app-shell{ height:100vh; }
+  }
+  @media (max-width:1279px){
+    body{ overflow-y:auto; }
+    .app-shell{ height:auto; min-height:100vh; }
+  }
+</style>
+</head>
+<body class="text-slate-100">
+<div id="app" class="app-shell"></div>
+
+<script>
+/* ============================================================================
+   RENDER ENGINE — vanilla JS. window.IAIGCompact.render(businessData).
+   Identical to compact.html — see that file for full inline comments.
+   ============================================================================ */
+(function(){
+  "use strict";
+
+  /* ---------- generic helpers ---------------------------------------- */
+  function esc(v){
+    if(v === null || v === undefined) return "";
+    return String(v)
+      .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+      .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+  }
+  function isLatinNum(s){ return /^[\x00-\x7F‎‏]*$/.test(String(s||"")); }
+  function ltrWrap(s){
+    var t = esc(s);
+    return isLatinNum(s) ? '<span class="ltr-inline">'+t+'</span>' : t;
+  }
+  function safeHref(href){
+    if(!href) return null;
+    var h = String(href).trim();
+    if(/^(https?:\/\/|mailto:|tel:)/i.test(h)) return h;
+    return null;
+  }
+  function linkOpen(href){
+    var h = safeHref(href);
+    return h ? '<a href="'+esc(h)+'" target="_blank" rel="noopener" class="hover:underline">' : '<span>';
+  }
+  function linkClose(href){ return safeHref(href) ? '</a>' : '</span>'; }
+
+  /* ---------- design tokens ------------------------------------------- */
+  var designTokens = {
+    bg:      "#0d1527",
+    panel:   "#131f37",
+    border:  "#1e293b",
+    text:    "#f1f5f9",
+    sub:     "#94a3b8",
+    muted:   "#64748b",
+    green:   "#22c55e",
+    amber:   "#f59e0b",
+    orange:  "#f97316",
+    teal:    "#14b8a6",
+    red:     "#ef4444",
+    blue:    "#3b82f6",
+    gold:    "#d4a72c"
+  };
+
+  /* ---------- inline Lucide icon paths (viewBox 0 0 24 24) ------------- */
+  var ICONS = {
+    "map-pin": '<path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0" /><circle cx="12" cy="10" r="3" />',
+    "mail": '<path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7" /><rect x="2" y="4" width="20" height="16" rx="2" />',
+    "phone": '<path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384" />',
+    "message-square": '<path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z" />',
+    "message-circle": '<path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719" />',
+    "globe": '<circle cx="12" cy="12" r="10" /><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" /><path d="M2 12h20" />',
+    "smartphone": '<rect width="14" height="20" x="5" y="2" rx="2" ry="2" /><path d="M12 18h.01" />',
+    "instagram": '<rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.3" cy="6.7" r="1.1" fill="currentColor" stroke="none" />',
+    "facebook": '<rect x="3" y="3" width="18" height="18" rx="4" /><path d="M14 8.5h-1.6A1.9 1.9 0 0 0 10.5 10.4V12.5H14l-.5 3h-3V21" />',
+    "star": '<path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z" />',
+    "trending-up": '<path d="M16 7h6v6" /><path d="m22 7-8.5 8.5-5-5L2 17" />',
+    "arrow-up-right": '<path d="M7 7h10v10" /><path d="M7 17 17 7" />',
+    "shield": '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />',
+    "shield-check": '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" /><path d="m9 12 2 2 4-4" />',
+    "badge-check": '<path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z" /><path d="m9 12 2 2 4-4" />',
+    "check": '<path d="M20 6 9 17l-5-5" />',
+    "x": '<path d="M18 6 6 18" /><path d="m6 6 12 12" />',
+    "triangle-alert": '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /><path d="M12 9v4" /><path d="M12 17h.01" />',
+    "circle-alert": '<circle cx="12" cy="12" r="10" /><line x1="12" x2="12" y1="8" y2="12" /><line x1="12" x2="12.01" y1="16" y2="16" />',
+    "crown": '<path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z" /><path d="M5 21h14" />',
+    "users": '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><path d="M16 3.128a4 4 0 0 1 0 7.744" /><path d="M22 21v-2a4 4 0 0 0-3-3.87" /><circle cx="9" cy="7" r="4" />',
+    "percent": '<line x1="19" x2="5" y1="5" y2="19" /><circle cx="6.5" cy="6.5" r="2.5" /><circle cx="17.5" cy="17.5" r="2.5" />',
+    "send": '<path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z" /><path d="m21.854 2.147-10.94 10.939" />',
+    "calendar": '<path d="M8 2v4" /><path d="M16 2v4" /><rect width="18" height="18" x="3" y="4" rx="2" /><path d="M3 10h18" />',
+    "clock": '<circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" />',
+    "award": '<path d="m15.477 12.89 1.515 8.526a.5.5 0 0 1-.81.47l-3.58-2.687a1 1 0 0 0-1.197 0l-3.586 2.686a.5.5 0 0 1-.81-.469l1.514-8.526" /><circle cx="12" cy="8" r="6" />',
+    "monitor": '<rect width="20" height="14" x="2" y="3" rx="2" /><line x1="8" x2="16" y1="21" y2="21" /><line x1="12" x2="12" y1="17" y2="21" />',
+    "cpu": '<path d="M12 20v2" /><path d="M12 2v2" /><path d="M17 20v2" /><path d="M17 2v2" /><path d="M2 12h2" /><path d="M2 17h2" /><path d="M2 7h2" /><path d="M20 12h2" /><path d="M20 17h2" /><path d="M20 7h2" /><path d="M7 20v2" /><path d="M7 2v2" /><rect x="4" y="4" width="16" height="16" rx="2" /><rect x="8" y="8" width="8" height="8" rx="1" />',
+    "zap": '<path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z" />',
+    "qr-code": '<rect width="5" height="5" x="3" y="3" rx="1" /><rect width="5" height="5" x="16" y="3" rx="1" /><rect width="5" height="5" x="3" y="16" rx="1" /><path d="M21 16h-3a2 2 0 0 0-2 2v3" /><path d="M21 21v.01" /><path d="M12 7v3a2 2 0 0 1-2 2H7" /><path d="M3 12h.01" /><path d="M12 3h.01" /><path d="M12 16v.01" /><path d="M16 12h1" /><path d="M21 12v.01" /><path d="M12 21v-1" />',
+    "shopping-cart": '<circle cx="8" cy="21" r="1" /><circle cx="19" cy="21" r="1" /><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12" />',
+    "credit-card": '<rect width="20" height="14" x="2" y="5" rx="2" /><line x1="2" x2="22" y1="10" y2="10" />',
+    "bot": '<path d="M12 8V4H8" /><rect width="16" height="12" x="4" y="8" rx="2" /><path d="M2 14h2" /><path d="M20 14h2" /><path d="M15 13v2" /><path d="M9 13v2" />',
+    "truck": '<path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2" /><path d="M15 18H9" /><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14" /><circle cx="17" cy="18" r="2" /><circle cx="7" cy="18" r="2" />',
+    "utensils": '<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2" /><path d="M7 2v20" /><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7" />',
+    "package": '<path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z" /><path d="M12 22V12" /><polyline points="3.29 7 12 12 20.71 7" /><path d="m7.5 4.27 9 5.15" />',
+    "link": '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />'
+  };
+  function icon(name, cls, sw){
+    var d = ICONS[name] || ICONS["circle-alert"];
+    return '<svg class="'+esc(cls||"")+' shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="'+(sw||2)+'" stroke-linecap="round" stroke-linejoin="round">'+d+'</svg>';
+  }
+  function starFilled(cls){
+    return '<svg class="'+esc(cls||"")+' shrink-0" viewBox="0 0 24 24" fill="currentColor" stroke="none">'+ICONS.star+'</svg>';
+  }
+
+  var STATUS_TEXT = { yes:"קיים", no:"לא קיים", mid:"בינוני", unknown:"לא ידוע" };
+
+  /* ---------- score → color / grade (fixed per-category color; grade by value) */
+  function scoreGrade(v){
+    if(v === null || v === undefined) return "לא ידוע";
+    if(v >= 80) return "טוב מאוד";
+    if(v >= 65) return "טוב";
+    if(v >= 45) return "בינוני";
+    if(v >= 25) return "טעון שיפור";
+    return "נמוך";
+  }
+
+  /* ---------- gauge (thin high-contrast ring) --------------------------- */
+  function gauge(value, label, color){
+    var v = (value === null || value === undefined) ? 0 : Math.max(0, Math.min(100, value));
+    var R = 30, CX = 36, CY = 36;
+    var C = 2 * Math.PI * R;
+    var offset = C * (1 - v/100);
+    return '' +
+    '<div class="flex flex-col items-center gap-1.5 w-[76px]">' +
+      '<div class="relative w-[72px] h-[72px]">' +
+        '<svg width="72" height="72" viewBox="0 0 72 72">' +
+          '<circle cx="'+CX+'" cy="'+CY+'" r="'+R+'" fill="none" stroke="#1e293b" stroke-width="6"/>' +
+          '<circle cx="'+CX+'" cy="'+CY+'" r="'+R+'" fill="none" stroke="'+color+'" stroke-width="6" stroke-linecap="round" ' +
+            'transform="rotate(-90 '+CX+' '+CY+')" ' +
+            'stroke-dasharray="'+C.toFixed(2)+' '+C.toFixed(2)+'" stroke-dashoffset="'+offset.toFixed(2)+'"/>' +
+        '</svg>' +
+        '<div class="absolute inset-0 flex items-center justify-center text-lg font-extrabold tabular-nums" style="color:'+color+'">' +
+          (value === null || value === undefined ? '<span class="text-xs text-slate-500">?</span>' : esc(v)) +
+        '</div>' +
+      '</div>' +
+      '<div class="text-[11px] font-bold leading-none" style="color:'+color+'">'+esc(scoreGrade(value))+'</div>' +
+      '<div class="text-[10px] text-slate-400 text-center leading-tight">'+esc(label)+'</div>' +
+    '</div>';
+  }
+
+  /* ---------- generic small UI atoms ------------------------------------ */
+  function card(inner, extraCls){
+    return '<div class="bg-[#131f37] border border-slate-800/70 rounded-xl p-3.5 '+(extraCls||"")+'">'+inner+'</div>';
+  }
+  function sectionTitle(iconName, label, badge, badgeCls){
+    return '' +
+    '<div class="flex items-center gap-2 mb-2.5">' +
+      icon(iconName, "w-5 h-5 text-slate-400") +
+      '<h3 class="text-xs font-bold text-slate-100 tracking-tight">'+esc(label)+'</h3>' +
+      (badge !== undefined && badge !== null ? '<span class="ms-auto text-[11px] font-extrabold px-2.5 py-1 rounded-full '+(badgeCls||"bg-slate-700 text-slate-200")+'">'+esc(badge)+'</span>' : "") +
+    '</div>';
+  }
+  function microStatus(st, stText){
+    var text = stText || STATUS_TEXT[st] || STATUS_TEXT.unknown;
+    var cls = st === "yes" ? "text-green-400 bg-green-400/10 border-green-400/30" :
+              st === "no"  ? "text-red-400 bg-red-400/10 border-red-400/30" :
+              st === "mid" ? "text-amber-400 bg-amber-400/10 border-amber-400/30" :
+                              "text-slate-400 bg-slate-500/10 border-slate-500/30";
+    return '<span class="text-[10px] font-bold px-2 py-0.5 rounded border '+cls+' whitespace-nowrap">'+esc(text)+'</span>';
+  }
+  function dot(st){
+    var c = st === "yes" ? "bg-green-400" : st === "mid" ? "bg-amber-400" : st === "no" ? "bg-red-400" : "bg-slate-500";
+    return '<span class="inline-block w-2 h-2 rounded-full '+c+'"></span>';
+  }
+
+  /* ---------------------------------------------------------------------- */
+  /* SECTION META — icons + Hebrew labels per data key                      */
+  /* ---------------------------------------------------------------------- */
+  var CONTACT_META = {
+    gps:      {label:"מיקום (GPS)", icon:"map-pin"},
+    email:    {label:"אימייל",      icon:"mail"},
+    whatsapp: {label:"וואטסאפ",     icon:"message-square"},
+    phone:    {label:"טלפון",       icon:"phone"}
+  };
+  var PRESENCE_META = {
+    website:          {label:"אתר אינטרנט",       icon:"globe"},
+    whatsappBusiness: {label:"WhatsApp Business",  icon:"smartphone"},
+    instagram:        {label:"אינסטגרם",           icon:"instagram"},
+    facebook:         {label:"פייסבוק",            icon:"facebook"},
+    telegram:         {label:"טלגרם",              icon:"message-circle"},
+    googleBusiness:   {label:"Google Business",    icon:"star"},
+    youtube:          {label:"יוטיוב",             icon:"monitor"},
+    tiktok:           {label:"טיקטוק",             icon:"zap"}
+  };
+  var SALES_META = {
+    yango:       {label:"Yango",              icon:"truck"},
+    wolt:        {label:"Wolt",               icon:"package"},
+    tenbis:      {label:"תן ביס",             icon:"utensils"},
+    qrMenu:      {label:"QR Menu",            icon:"qr-code"},
+    onlineOrder: {label:"הזמנות אונליין",     icon:"shopping-cart"}
+  };
+  var TECH_META = {
+    aiBot:          {label:"בוט AI",           icon:"bot"},
+    aiBotWhatsapp:  {label:"בוט AI וואטסאפ",   icon:"message-circle"},
+    crm:            {label:"CRM",              icon:"users"},
+    orderSystem:    {label:"מערכת הזמנות",    icon:"shopping-cart"},
+    paymentSystem:  {label:"מערכת תשלומים",   icon:"credit-card"},
+    automations:    {label:"אוטומציות",       icon:"cpu"},
+    apiReady:       {label:"API Ready",        icon:"zap"},
+    webhook:        {label:"Webhook",          icon:"send"},
+    mobileApp:      {label:"אפליקציה",         icon:"smartphone"}
+  };
+
+  var SECTION_LABEL = {
+    contact:"פרטי קשר", presence:"נוכחות דיגיטלית", sales:"ערוצי מכירה",
+    tech:"אוטומציה וטכנולוגיה", security:"אבטחה", branding:"מיתוג עסקי", readiness:"מוכנות לעתיד"
+  };
+
+  var RECS = {
+    "presence.youtube":"פתחו ערוץ יוטיוב עסקי", "presence.tiktok":"שקלו נוכחות בטיקטוק",
+    "presence.telegram":"פתחו ערוץ טלגרם לעדכונים", "presence.instagram":"חזקו נוכחות באינסטגרם",
+    "sales.tenbis":"התחברו לתן ביס", "sales.qrMenu":"הדפיסו מדבקת QR לתפריט",
+    "sales.wolt":"התחברו ל-Wolt", "sales.yango":"התחברו ל-Yango", "sales.onlineOrder":"הוסיפו הזמנה אונליין",
+    "sales.digitalMenu":"השלימו תפריט דיגיטלי מקושר להזמנות",
+    "tech.apiReady":"חשפו API בסיסי לאינטגרציות", "tech.webhook":"הוסיפו Webhook לאירועים",
+    "tech.mobileApp":"שקלו אפליקציה ייעודית", "tech.automations":"הרחיבו אוטומציות מעבר להזמנה/תשלום",
+    "tech.crm":"חברו מערכת CRM", "tech.aiBotWhatsapp":"הוסיפו בוט AI בוואטסאפ",
+    "retention.newsletter":"הפעילו ניוזלטר תקופתי", "retention.smsMarketing":"הוסיפו ערוץ SMS למבצעים",
+    "retention.club":"הקימו מועדון לקוחות", "retention.points":"הוסיפו תוכנית נקודות",
+    "readiness.apiReady":"חשפו API לקריאות מכונה (agent-ready)",
+    "readiness.commerceReady":"השלימו יכולת סליקה/מסחר מלאה"
+  };
+
+  /* CRITICAL_SET — the fixed list of "you're not reachable/trustworthy yet"
+     keys. Everything else that is st:"no"/"mid" is a growth opportunity. */
+  var CRITICAL_SET = {
+    "contact.gps":1, "contact.email":1, "contact.whatsapp":1, "contact.phone":1,
+    "contact.hours":1, "contact.booking":1,
+    "security.ssl":1, "security.twoFA":1, "security.backups":1, "security.privacyPolicy":1, "security.terms":1,
+    "presence.website":1, "presence.googleBusiness":1, "presence.whatsappBusiness":1,
+    "tech.paymentSystem":1, "tech.orderSystem":1,
+    "branding.cover":1, "branding.logoAsset":1
+  };
+
+  /* ---------- gaps / opportunities engine -------------------------------- */
+  function collectIssues(data){
+    var gaps = [], opps = [];
+    function scan(sectionKey, metaMap, obj, fallbackLabel){
+      if(!obj) return;
+      Object.keys(obj).forEach(function(k){
+        var item = obj[k];
+        if(!item || item.relevant === false) return;
+        if(item.st !== "no" && item.st !== "mid") return;
+        var meta = metaMap && metaMap[k];
+        var label = (meta && meta.label) || fallbackLabel(k) || k;
+        var iconName = (meta && meta.icon) || "circle-alert";
+        var entry = {section:sectionKey, key:k, label:label, icon:iconName, st:item.st};
+        var ck = sectionKey+"."+k;
+        if(item.st === "no" && CRITICAL_SET[ck]){
+          gaps.push(entry);
+        } else {
+          opps.push(entry);
+        }
+      });
+    }
+    scan("contact", CONTACT_META, data.contact, function(k){ return k; });
+    scan("presence", PRESENCE_META, data.presence, function(k){ return k; });
+    scan("sales", SALES_META, data.sales, function(k){ return k; });
+    scan("tech", TECH_META, data.tech, function(k){ return k; });
+    scan("security", {
+      ssl:{label:"SSL", icon:"shield-check"}, twoFA:{label:"אימות דו-שלבי", icon:"shield"},
+      backups:{label:"גיבויים", icon:"shield"}, privacyPolicy:{label:"מדיניות פרטיות", icon:"shield"},
+      terms:{label:"תנאי שימוש", icon:"shield"}
+    }, data.security, function(k){ return k; });
+    scan("retention", {
+      club:{label:"מועדון לקוחות", icon:"crown"}, points:{label:"נקודות", icon:"percent"},
+      coupons:{label:"קופונים", icon:"percent"}, vip:{label:"VIP", icon:"crown"},
+      newsletter:{label:"ניוזלטר", icon:"send"}, smsMarketing:{label:"SMS", icon:"send"},
+      waMarketing:{label:"דיוור WhatsApp", icon:"message-circle"}
+    }, data.retention, function(k){ return k; });
+    scan("readiness", {
+      apiReady:{label:"API Ready", icon:"zap"}, commerceReady:{label:"Commerce Ready", icon:"credit-card"},
+      aiReady:{label:"AI Ready", icon:"bot"}, machineReady:{label:"Machine Ready", icon:"cpu"}
+    }, {
+      apiReady: data.readiness && data.readiness.apiReady,
+      commerceReady: data.readiness && data.readiness.commerceReady,
+      aiReady: data.readiness && data.readiness.aiReady,
+      machineReady: data.readiness && data.readiness.machineReady
+    }, function(k){ return k; });
+    if(data.branding){
+      if(data.branding.cover && (data.branding.cover.relevant !== false)){
+        var entry = {section:"branding", key:"cover", label:"תמונת שער", icon:"shield", st:data.branding.cover.st};
+        if(data.branding.cover.st === "no") gaps.push(entry);
+      }
+      if(data.branding.logoAsset && (data.branding.logoAsset.relevant !== false)){
+        var entry2 = {section:"branding", key:"logoAsset", label:"לוגו", icon:"shield", st:data.branding.logoAsset.st};
+        if(data.branding.logoAsset.st === "no") gaps.push(entry2);
+      }
+    }
+    return {gaps:gaps, opps:opps};
+  }
+
+  /* ============================================================================
+     SECTION RENDERERS
+     ============================================================================ */
+
+  function renderHeader(data){
+    var id = data.identity, v = data.verification;
+    var logoHtml = "";
+    if(id.logo){
+      logoHtml = id.logo.kind === "svg" ? id.logo.value : esc(id.logo.value);
+    } else { logoHtml = "🏢"; }
+
+    var tags = (id.tags && id.tags.length) ? id.tags : (id.categoryTag ? id.categoryTag.split("·").map(function(s){return s.trim();}).filter(function(s){return s && !s.match(/^[A-Z]$/) && s.length>1;}) : []);
+    var shortId = id.shortId || id.entityId;
+    var regLine = id.regNumber ? ('ח.פ <span class="tabular-nums">'+esc(id.regNumber)+'</span>') : '<span class="text-red-400">ח.פ לא קיים ✗</span>';
+
+    // Founder instruction 2026-07-09: the 4 score rings sit as ONE tight
+    // adjacent cluster in the SAME row as the business name, with the name
+    // DIRECTLY above them — inside the hero card, no separate gauges box.
+    var gaugeCluster = '' +
+    '<div class="flex items-start gap-1 mt-1.5">' +
+      gauge(data.scores.digital, "דיגיטלי", designTokens.green) +
+      gauge(data.scores.ai, "AI", designTokens.amber) +
+      gauge(data.scores.automation, "אוטומציה", designTokens.orange) +
+      gauge(data.scores.marketing, "שיווק", designTokens.teal) +
+    '</div>';
+
+    var bizCard = '' +
+    '<div class="flex items-center gap-4 bg-[#131f37] border border-slate-800/70 rounded-xl px-5 py-4 min-w-0">' +
+      '<div class="w-16 h-16 rounded-full bg-gradient-to-br from-slate-700 to-slate-800 border border-slate-700 flex items-center justify-center text-3xl shrink-0">'+logoHtml+'</div>' +
+      '<div class="shrink-0 w-[316px] min-w-0">' +
+        '<div class="flex items-center gap-2">' +
+          '<h1 class="text-xl font-extrabold text-white truncate">'+esc(id.name)+'</h1>' +
+          (id.nameVerified ? icon("badge-check","w-5 h-5 text-blue-400") : "") +
+          (v && v.level >= 2 ? icon("shield-check","w-5 h-5 text-green-400") : "") +
+          (id.active ? '<span class="flex items-center gap-1 text-xs text-green-400 font-bold shrink-0">'+dot("yes")+' פעיל</span>' : '<span class="flex items-center gap-1 text-xs text-red-400 font-bold shrink-0">'+dot("no")+' לא פעיל</span>') +
+        '</div>' +
+        gaugeCluster +
+      '</div>' +
+      '<div class="min-w-0 flex-1 flex flex-col gap-2 ms-2 ps-5 border-s border-slate-800/60">' +
+        '<div class="flex items-center gap-2 text-[11.5px] text-slate-400 flex-wrap">' +
+          '<span class="ltr-inline tabular-nums">'+esc(shortId)+'</span>' +
+          '<span class="text-slate-600">•</span>' +
+          '<span>'+regLine+'</span>' +
+        '</div>' +
+        '<div class="flex items-center gap-2 flex-wrap">' +
+          tags.map(function(t){ return '<span class="text-[11px] px-2.5 py-1 rounded-full bg-slate-800 text-slate-300 border border-slate-700">'+esc(t)+'</span>'; }).join("") +
+        '</div>' +
+      '</div>' +
+    '</div>';
+
+    return bizCard;
+  }
+
+  function renderGapsWidget(gaps){
+    var CAP = 10;
+    var body = gaps.length
+      ? gaps.slice(0,CAP).map(function(g){
+          return '<div class="flex items-center gap-2 py-1.5 border-b border-slate-800/60 last:border-0">' +
+            icon("circle-alert","w-4 h-4 text-red-400") +
+            '<span class="text-xs text-slate-300 truncate"><b class="text-slate-100 font-semibold">'+esc(SECTION_LABEL[g.section]||g.section)+':</b> '+esc(g.label)+'</span>' +
+          '</div>';
+        }).join("")
+      : '<div class="text-xs text-slate-400 py-2">לא נמצאו חוסרים קריטיים ✓</div>';
+    if(gaps.length > CAP){
+      body += '<div class="text-[10.5px] text-red-300/80 pt-1">+ '+(gaps.length-CAP)+' נוספים</div>';
+    }
+    return card(sectionTitle("triangle-alert","חוסרים קריטיים", gaps.length, "bg-red-500 text-white")+body, "border-red-500/30");
+  }
+
+  function renderTechWidget(data){
+    var rows = Object.keys(TECH_META).map(function(k){
+      var meta = TECH_META[k], item = data.tech[k] || {st:"unknown"};
+      var okIcon = item.st === "yes" ? icon("check","w-4 h-4 text-green-400") :
+                   item.st === "mid" ? icon("triangle-alert","w-4 h-4 text-amber-400") :
+                   icon("x","w-4 h-4 text-red-400");
+      return '<div class="flex items-center gap-2 py-1.5 border-b border-slate-800/60 last:border-0">' +
+        icon(meta.icon,"w-4 h-4 text-slate-500") +
+        '<span class="text-xs text-slate-300 flex-1 truncate">'+esc(meta.label)+'</span>' +
+        okIcon +
+      '</div>';
+    }).join("");
+    return card(sectionTitle("cpu","אוטומציה וטכנולוגיה")+rows);
+  }
+
+  function renderVerificationBanner(data){
+    var v = data.verification, c = data.contact;
+    var fields = ["gps","email","whatsapp","phone"];
+    var items = fields.map(function(k){
+      var meta = CONTACT_META[k], item = c[k] || {st:"unknown"};
+      return '' +
+      '<div class="flex items-center gap-2 bg-[#0f1a30] border border-slate-800/60 rounded-lg px-2.5 py-2 flex-1 min-w-0">' +
+        icon(meta.icon,"w-4 h-4 text-blue-400") +
+        '<div class="min-w-0 flex-1">' +
+          '<div class="text-[10px] text-slate-500 leading-none">'+esc(meta.label)+'</div>' +
+          '<div class="text-xs font-semibold text-slate-200 truncate">'+(item.value ? ltrWrap(item.value) : '<span class="text-red-400">לא קיים</span>')+'</div>' +
+        '</div>' +
+        (item.st === "yes" ? icon("check","w-4 h-4 text-green-400") : icon("x","w-4 h-4 text-red-400")) +
+      '</div>';
+    }).join("");
+    return card('' +
+      '<div class="flex items-center gap-2 mb-3">' +
+        icon("shield-check","w-5 h-5 text-slate-400") +
+        '<h3 class="text-xs font-bold text-slate-100">אימות וזהות</h3>' +
+        '<span class="ms-auto flex items-center gap-1 text-[11px] font-bold '+(v.ok?"text-green-400":"text-red-400")+'">'+dot(v.ok?"yes":"no")+' '+esc(v.status)+'</span>' +
+        icon("clock","w-3.5 h-3.5 text-slate-500") +
+        '<span class="text-[10.5px] text-slate-500">'+esc(v.freshness||"לא ידוע")+'</span>' +
+      '</div>' +
+      '<div class="flex items-stretch gap-2 flex-wrap">'+items+'</div>'
+    );
+  }
+
+  function renderPresenceGrid(data){
+    var tiles = Object.keys(PRESENCE_META).map(function(k){
+      var meta = PRESENCE_META[k], item = data.presence[k] || {st:"unknown"};
+      var iconBg = item.st === "yes" ? "bg-blue-500/15 border-blue-400/40 text-blue-300" : "bg-slate-800/60 border-slate-700 text-slate-500";
+      return '' +
+      '<div class="flex flex-col items-center gap-1.5 bg-[#0f1a30] border border-slate-800/60 rounded-lg px-1.5 py-3">' +
+        '<div class="w-8 h-8 rounded-full flex items-center justify-center border '+iconBg+'">'+icon(meta.icon,"w-4 h-4")+'</div>' +
+        '<div class="text-[10px] text-slate-300 text-center leading-tight">'+esc(meta.label)+'</div>' +
+        microStatus(item.st) +
+      '</div>';
+    }).join("");
+    return card(sectionTitle("globe","נוכחות דיגיטלית")+'<div class="grid grid-cols-4 gap-2">'+tiles+'</div>');
+  }
+
+  function renderSalesRow(data){
+    var items = Object.keys(SALES_META).map(function(k){
+      var meta = SALES_META[k], item = (data.sales && data.sales[k]) || {st:"unknown"};
+      return '' +
+      '<div class="flex items-center gap-2 bg-[#0f1a30] border border-slate-800/60 rounded-lg px-2.5 py-2 flex-1 min-w-0">' +
+        dot(item.relevant === false ? "unknown" : item.st) +
+        icon(meta.icon,"w-4 h-4 text-slate-400") +
+        '<span class="text-[11px] text-slate-300 truncate flex-1">'+esc(meta.label)+'</span>' +
+      '</div>';
+    }).join("");
+    return card(sectionTitle("shopping-cart","ערוצי מכירה ומשלוחים")+'<div class="flex items-stretch gap-2 flex-wrap">'+items+'</div>');
+  }
+
+  function renderOpportunities(opps){
+    var CAP = 12;
+    var list = opps.slice(0,CAP);
+    var half = Math.ceil(list.length/2);
+    function col(items){
+      return '<div class="flex-1 min-w-0">'+items.map(function(o){
+        var key = o.section+"."+o.key;
+        var text = RECS[key] || ("שפרו: "+o.label);
+        return '<div class="flex items-start gap-2 py-1.5 border-b border-slate-800/50 last:border-0">' +
+          icon("arrow-up-right","w-4 h-4 text-[#d4a72c] mt-[1px]") +
+          '<span class="text-[11px] text-slate-300 leading-tight">'+esc(text)+'</span>' +
+        '</div>';
+      }).join("")+'</div>';
+    }
+    var body = list.length
+      ? '<div class="flex gap-4">'+col(list.slice(0,half))+col(list.slice(half))+'</div>'
+      : '<div class="text-xs text-slate-400 py-2">אין המלצות פתוחות כרגע ✓</div>';
+    if(opps.length > CAP){
+      body += '<div class="text-[10.5px] text-[#d4a72c]/80 pt-1.5">+ '+(opps.length-CAP)+' הזדמנויות נוספות</div>';
+    }
+    return card(sectionTitle("trending-up","הזדמנויות לשיפור", opps.length, "bg-[#d4a72c] text-[#241a02]")+body, "border-[#d4a72c]/30");
+  }
+
+  function renderContactBrandingSummary(data){
+    var c = data.contact, b = data.branding;
+    var contactRows = ["phone","whatsapp","email"].map(function(k){
+      var meta = CONTACT_META[k], item = c[k] || {st:"unknown"};
+      return '<div class="flex items-center gap-2 py-1.5 border-b border-slate-800/50 last:border-0">' +
+        icon(meta.icon,"w-4 h-4 text-slate-500") +
+        '<span class="text-[11px] text-slate-300 truncate flex-1">'+(item.value ? ltrWrap(item.value) : '<span class="text-red-400">לא קיים</span>')+'</span>' +
+        (item.verified ? '<span class="text-[9.5px] text-green-400 font-bold">מאומת</span>' : "") +
+      '</div>';
+    }).join("");
+    var colors = (b.colors||[]);
+    var swatches = "";
+    for(var i=0;i<4;i++){
+      swatches += colors[i] ? '<span class="w-4 h-4 rounded-full border border-white/20 inline-block" style="background:'+esc(colors[i])+'"></span>' : '<span class="w-4 h-4 rounded-full border border-dashed border-slate-600 inline-block"></span>';
+    }
+    var vipLine = (data.retention && data.retention.vip && data.retention.vip.st === "yes")
+      ? '<div class="flex items-center gap-2 mt-2 text-[10.5px] text-[#d4a72c] font-bold">'+icon("crown","w-4 h-4")+' מועדון VIP: '+esc(data.retention.vip.stText||"פעיל")+'</div>'
+      : "";
+    return card('' +
+      sectionTitle("phone","פרטי קשר ומיתוג") +
+      contactRows +
+      '<div class="flex items-center justify-between mt-2.5 pt-2.5 border-t border-slate-800/60">' +
+        '<div class="flex items-center gap-1.5">'+swatches+'</div>' +
+        '<span class="text-[11px] text-slate-400 italic truncate max-w-[55%]">'+(b.slogan ? '"'+esc(b.slogan)+'"' : '<span class="text-red-400 not-italic">אין סלוגן</span>')+'</span>' +
+      '</div>' +
+      vipLine
+    );
+  }
+
+  function renderReviews(data){
+    var rev = data.reviews.google;
+    var starsFull = rev.rating ? Math.round(rev.rating) : 0;
+    var starsHtml = '<div class="flex items-center gap-1">'+
+      Array.from({length:5}).map(function(_,i){
+        return i < starsFull ? starFilled("w-4 h-4 text-[#d4a72c]") : icon("star","w-4 h-4 text-slate-600");
+      }).join("")+'</div>';
+    var topRated = (rev.rating && rev.rating >= 4.5)
+      ? '<span class="flex items-center gap-1 text-[10px] font-bold text-[#d4a72c]">'+icon("award","w-3.5 h-3.5")+' מדורג מצוין</span>' : "";
+    var sms = data.retention && data.retention.smsMarketing;
+    var wa = data.retention && data.retention.waMarketing;
+    return card('' +
+      sectionTitle("star","ביקורות") +
+      '<div class="flex items-center gap-4">' +
+        '<div class="text-3xl font-extrabold tabular-nums text-white">'+(rev.rating!==null&&rev.rating!==undefined?esc(rev.rating.toFixed(1)):"—")+'</div>' +
+        '<div class="flex-1 min-w-0">' +
+          starsHtml +
+          '<div class="flex items-center gap-1.5 text-[10.5px] text-slate-400 mt-1">'+icon("users","w-3.5 h-3.5")+' '+((rev.count===null||rev.count===undefined)?"לא ידוע":esc(rev.count.toLocaleString()))+' ביקורות</div>' +
+        '</div>' +
+        topRated +
+      '</div>' +
+      '<div class="flex items-center justify-between mt-2.5 pt-2.5 border-t border-slate-800/60 text-[10.5px]">' +
+        '<span class="flex items-center gap-1.5 text-slate-400">'+icon("send","w-3.5 h-3.5")+' SMS דיוור</span>' + microStatus(sms ? sms.st : "unknown", sms && sms.stText) +
+      '</div>' +
+      '<div class="flex items-center justify-between mt-1.5 text-[10.5px]">' +
+        '<span class="flex items-center gap-1.5 text-slate-400">'+icon("message-circle","w-3.5 h-3.5")+' WhatsApp דיוור</span>' + microStatus(wa ? wa.st : "unknown", wa && wa.stText) +
+      '</div>'
+    );
+  }
+
+  function readinessTile(iconName, label, item){
+    item = item || {st:"unknown"};
+    return '' +
+    '<div class="flex flex-col items-center gap-1.5 bg-[#0f1a30] border border-slate-800/60 rounded-lg px-1.5 py-3">' +
+      icon(iconName,"w-[18px] h-[18px] "+(item.st==="yes"?"text-green-400":item.st==="mid"?"text-amber-400":item.st==="no"?"text-red-400":"text-slate-500")) +
+      '<div class="text-[9.5px] text-slate-400 text-center leading-tight">'+esc(label)+'</div>' +
+      microStatus(item.st, item.stText) +
+    '</div>';
+  }
+
+  function renderReadinessMatrix(data){
+    var r = data.readiness;
+    var tiles = [
+      readinessTile("bot","AI Ready", r.aiReady),
+      readinessTile("cpu","Machine Ready", r.machineReady),
+      readinessTile("zap","API Ready", r.apiReady),
+      readinessTile("credit-card","Commerce Ready", r.commerceReady),
+      readinessTile("percent","רמת אוטומציה", {st: r.automationLevel==="גבוהה"?"yes":r.automationLevel==="בינונית"?"mid":r.automationLevel==="נמוכה"?"no":"unknown", stText: r.automationLevel||"לא ידוע"}),
+      readinessTile("link","אינטגרציות", {st: (r.integrationCount>=5)?"yes":(r.integrationCount>=1)?"mid":"no", stText: (r.integrationCount===null||r.integrationCount===undefined)?"לא ידוע":String(r.integrationCount)})
+    ];
+    return card(sectionTitle("zap","מוכנות לעתיד")+'<div class="grid grid-cols-3 gap-2">'+tiles.join("")+'</div>');
+  }
+
+  /* ============================================================================
+     render(businessData) — public entry point
+     ============================================================================ */
+  function render(data){
+    var app = document.getElementById("app");
+    var issues = collectIssues(data);
+    var html = '<div class="w-full h-full flex flex-col px-6 py-4 gap-4 max-w-[1760px] mx-auto">';
+
+    if(data.meta && data.meta.demo){
+      html += '<div class="fixed top-3 -start-14 z-50 rotate-[-45deg] bg-gradient-to-br from-[#d4a72c] to-[#8a6d1c] text-[#241a02] font-extrabold text-[11px] tracking-wide px-16 py-1 shadow-lg">דוגמה להמחשה</div>';
+    }
+
+    html += renderHeader(data);
+
+    html += '<div class="grid grid-cols-12 gap-4 flex-1 min-h-0">';
+      // COL 1 — sidebar (right in RTL)
+      html += '<div class="col-span-12 lg:col-span-3 flex flex-col gap-4 min-h-0">' +
+                renderGapsWidget(issues.gaps) +
+                renderTechWidget(data) +
+              '</div>';
+      // COL 2 — core (center)
+      html += '<div class="col-span-12 lg:col-span-6 flex flex-col gap-4 min-h-0">' +
+                renderVerificationBanner(data) +
+                renderPresenceGrid(data) +
+                renderSalesRow(data) +
+                renderOpportunities(issues.opps) +
+              '</div>';
+      // COL 3 — summary (left in RTL)
+      html += '<div class="col-span-12 lg:col-span-3 flex flex-col gap-4 min-h-0">' +
+                renderContactBrandingSummary(data) +
+                renderReviews(data) +
+                renderReadinessMatrix(data) +
+              '</div>';
+    html += '</div>';
+
+    html += '<div class="text-center text-[9px] text-slate-600 pt-0.5">' +
+      esc((data.meta && data.meta.footerNote) || "") + ' · ' + esc((data.meta && data.meta.generatedAt) || "") +
+      ' · <span class="ltr-inline">'+esc(data.identity.entityId)+'</span></div>';
+
+    html += '</div>';
+    app.innerHTML = html;
+    document.title = (data.identity && data.identity.name ? data.identity.name + " — " : "") + "דרכון דיגיטלי לעסק";
+  }
+
+  window.IAIGCompact = { render: render, designTokens: designTokens };
+})();
+</script>
+
+<!-- ==========================================================================
+     BUSINESS DATA — REAL RECORD. entity://M/beer-sheva/israel-ai-grid.
+     Copied verbatim from docs/passport-template/israel-ai-grid.html (PostgreSQL
+     `iaig`, 2026-07-08). Only identity.tags is additive (re-split of the
+     already-approved categoryTag string — see header comment). No shortId.
+     ========================================================================== -->
+<script id="business-data">
+var businessData = {
+  "meta": {
+    "demo": false,
+    "generatedAt": "2026-07-08T20:14:01+00:00",
+    "sources": ["operator/company-zero-2026-07-08"],
+    "footerNote": "הופק מהרשומה המאומתת בלבד — נתונים חסרים מוצגים כ'לא קיים', לעולם לא מנוחשים"
+  },
+  "identity": {
+    "entityId": "entity://M/beer-sheva/israel-ai-grid",
+    "name": "Israel AI Grid",
+    "nameVerified": true,
+    "categoryTag": "M · שירותים מקצועיים (טכנולוגיה) · באר שבע",
+    "tags": ["שירותים מקצועיים", "טכנולוגיה"],
+    "city": "באר שבע",
+    "foundedYear": 2026,
+    "active": true,
+    "regType": "עוסק בהקמה",
+    "regNumber": null,
+    "management": "בעלים מאומת (OTP): +972-50-900-0226",
+    "logo": { "kind": "emoji", "value": "🛰️" }
+  },
+  "verification": {
+    "status": "מאומת בעלים (L1)",
+    "ok": true,
+    "level": 1,
+    "trust": { "value": 0.3, "label": "בינונית (0.30)" },
+    "lastVerified": "2026-07-08",
+    "freshness": "עודכן היום",
+    "chain": "רשומת Company Zero + 6 שדות עם מקור מתועד (field_provenance) — טרם נוצרו רשומות verification_record נפרדות",
+    "records": 0
+  },
+  "scores": { "digital": 71, "ai": 56, "automation": 55, "marketing": 15 },
+  "contact": {
+    "gps": { "st": "yes", "value": "31.2518, 34.7913", "href": "https://www.google.com/maps?q=31.2518,34.7913" },
+    "phone": { "st": "yes", "value": "+972-50-900-0226", "href": "tel:+972509000226", "verified": true },
+    "whatsapp": { "st": "yes", "value": "+972-50-900-0226", "note": "לחצו לפתיחה", "href": "https://wa.me/972509000226", "verified": true },
+    "email": { "st": "yes", "value": "leviitzhak41@gmail.com", "href": "mailto:leviitzhak41@gmail.com", "verified": false },
+    "hours": { "st": "yes", "value": "א׳-ה׳ 09:00-17:00", "note": "5 ימים בשבוע" },
+    "booking": { "st": "yes", "value": "פגישת היכרות — 30 דק' · חינם" }
+  },
+  "presence": {
+    "youtube": { "st": "no" },
+    "tiktok": { "st": "no" },
+    "instagram": { "st": "yes", "value": "itzhakaigrid", "verified": false, "href": "https://instagram.com/itzhakaigrid" },
+    "facebook": { "st": "yes", "value": "Israel AI Grid", "verified": false, "href": "https://www.facebook.com/profile.php?id=1173051522561873" },
+    "telegram": { "st": "yes", "value": "@Protocol26bot", "verified": true, "note": "בוט שער חי", "href": "https://t.me/Protocol26bot" },
+    "whatsappBusiness": { "st": "yes", "value": "ערוץ WhatsApp", "verified": false, "note": "ערוץ שידור (לא פרופיל Business רשמי)", "href": "https://whatsapp.com/channel/0029VbDXxzoDDmFVCkhXcq3P" },
+    "googleBusiness": { "st": "no" },
+    "website": { "st": "yes", "value": "israelaigrid.github.io", "verified": true, "href": "https://israelaigrid.github.io" }
+  },
+  "sales": {
+    "yango": { "st": "no", "relevant": false },
+    "mishlocha": { "st": "no", "relevant": false },
+    "tenbis": { "st": "no", "relevant": false },
+    "wolt": { "st": "no", "relevant": false },
+    "onlineOrder": { "st": "no", "relevant": false },
+    "digitalMenu": { "st": "no", "relevant": false },
+    "qrMenu": { "st": "no", "relevant": false }
+  },
+  "tech": {
+    "aiBot": { "st": "yes", "value": "@Protocol26bot", "note": "בוט Telegram חי — שער הפרוטוקול עצמו", "verified": true },
+    "aiBotWhatsapp": { "st": "no" },
+    "crm": { "st": "no" },
+    "apiReady": { "st": "no" },
+    "webhook": { "st": "no" },
+    "automations": { "st": "mid", "note": "רישום, אימות בעלים וכרטיס דרכון — אוטומטיים; שאר הזרימות ידניות" },
+    "orderSystem": { "st": "yes", "note": "טבלאות הזמנות + שירותים חיות ב-Postgres (booking_slots, salon_services)" },
+    "paymentSystem": { "st": "yes", "value": "ביט + PayBox", "href": "https://links.payboxapp.com/1nyvGm1TB4b", "verified": true },
+    "mobileApp": { "st": "no" }
+  },
+  "branding": {
+    "cover": { "st": "no" },
+    "logoAsset": { "st": "no" },
+    "colors": [],
+    "slogan": null
+  },
+  "retention": {
+    "club": { "st": "no" },
+    "points": { "st": "no" },
+    "coupons": { "st": "no" },
+    "vip": { "st": "no" },
+    "newsletter": { "st": "no" },
+    "smsMarketing": { "st": "no" },
+    "waMarketing": { "st": "mid", "stText": "אפשרי (לא פעיל)", "note": "ניתן להפעיל דרך ערוץ הוואטסאפ הקיים" }
+  },
+  "security": {
+    "ssl": { "st": "yes", "note": "HTTPS דרך GitHub Pages" },
+    "twoFA": { "st": "unknown" },
+    "backups": { "st": "yes", "note": "גיבוי יומי (DB)" },
+    "privacyPolicy": { "st": "no" },
+    "terms": { "st": "no" }
+  },
+  "readiness": {
+    "aiReady": { "st": "yes", "note": "בוט AI חי + רשומה קריאה-מכונה" },
+    "machineReady": { "st": "yes", "note": "entity:// נפתר, רשומת Postgres מובנית" },
+    "apiReady": { "st": "no" },
+    "commerceReady": { "st": "mid", "stText": "חלקי", "note": "לינקי תשלום ידניים (ביט/PayBox) — אין API מסחר" },
+    "automationLevel": "בינונית",
+    "integrationCount": 3
+  },
+  "reviews": { "google": { "rating": null, "count": null, "last": null } }
+};
+window.IAIGCompact.render(businessData);
+</script>
+
+<!-- ==========================================================================
+     SCORE FORMULA (unchanged from israel-ai-grid.html — copied verbatim,
+     no score is guessed; every point traces to a fact above).
+
+     digital = 71  — VERBATIM from scripts/generate_passport.compute_digital_score():
+       channels: min(40, 6*len(present)+4*len(verified)) = min(40, 6*10+4*6)=40
+       + verification_level>=1: +15  + trust_score 0.3*20=6 (rounded)
+       + provenance_sources present: +10  => 40+15+6+10 = 71.
+
+     ai = 56 — components (0-100, additive, capped):
+       +30 live reachable AI agent (tech.aiBot: @Protocol26bot IS the product)
+       +20 machine-readable structured record (entity:// resolves to a real
+           Postgres row with field_provenance — always true here)
+       +0  AI channel NOT duplicated on WhatsApp (aiBotWhatsapp = no)
+       +0  no API/webhook for agent-to-agent calls
+       +6  trust_score(0.3) * 20, rounded — confidence discount
+       total = 30+20+0+0+6 = 56
+
+     automation = 55 — components:
+       +25 orderSystem yes (live booking_slots + salon_services tables)
+       +25 paymentSystem yes (Bit + PayBox live links)
+       +0  webhook = no, +0 crm = no, +0 apiReady = no
+       +5  automations = mid (half credit, 10 max) => 5
+       total = 25+25+0+0+0+5 = 55
+
+     marketing = 15 — components (deliberately low — honesty is the product):
+       +5 website with SSL live · +5 Facebook page exists · +5 Instagram exists
+       +0 no YouTube/TikTok/Google Business, no reviews, no retention/CRM
+          marketing tooling active, no ad campaigns tracked
+       total = 5+5+5 = 15
+     ========================================================================== -->
+</body>
+</html>
